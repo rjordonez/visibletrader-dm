@@ -1,6 +1,5 @@
 import { EMAIL_PROVIDER_ID, signIn } from "@/lib/auth";
 import { getCampaignTemplate } from "@/lib/templates/campaign-templates";
-import { DemoNotice } from "@/components/demo-notice";
 
 export const metadata = {
   title: "Login - VisibleTrader DM",
@@ -45,8 +44,6 @@ export default async function LoginPage({
               : "Sign in by email, then connect your Instagram professional account."}
           </p>
         </div>
-
-        <DemoNotice variant="panel" />
 
         <div className="panel rounded p-8 shadow-black/40">
           {selectedTemplate && !checkEmail && (
