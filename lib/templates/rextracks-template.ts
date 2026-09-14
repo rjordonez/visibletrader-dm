@@ -1,9 +1,11 @@
 import type { ImportRow } from "@/lib/import-queue";
 
-// Modeled on rextracks' actual videos (transcribed from his posted content):
-// he asks for the same keyword ("signals", sometimes "sauce") across nearly
-// every post, and his real referral code (qjyzmf) is used as the tracked
-// link so a signup from this campaign attributes to him correctly.
+// Keyword ("signals", sometimes "sauce") matches what rextracks actually
+// asks for across his videos, and the tracked link is his real referral
+// code (qjyzmf) so a signup from this campaign attributes to him. The
+// opening DM -> link DM copy itself matches campaign "213213123" (built by
+// hand as the reference for what this flow should say) rather than
+// inventing new wording.
 // triggerScope "any" -- deliberately not "specific" -- so there's no reel
 // to pick: this loads with everything already fillable, "Go Live" is the
 // only step left.
@@ -11,10 +13,10 @@ export const REXTRACKS_CAMPAIGN_TEMPLATE: ImportRow = {
   name: "rextracks — signals",
   triggerScope: "any",
   keywords: ["signals", "sauce"],
-  dmMessage:
-    "yo here's the site — tracks the same accounts that keep printing money on these prediction markets 👀 {link}",
-  publicReply: "sent it 👀",
+  openingDmMessage:
+    "Hey there! If you are interested in VisibleTrader click the button below.",
+  openingDmButtonLabel: "Send VisibleTrader",
+  dmMessage: "Here is the link {link}",
+  publicReply: "Sent you a DM!",
   trackedUrl: "https://visibletrader.com/r/qjyzmf",
-  openingDmMessage: "",
-  openingDmButtonLabel: "",
 };
