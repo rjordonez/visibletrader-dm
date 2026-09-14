@@ -73,7 +73,7 @@ export function DemoNotice({ variant }: { variant: "banner" | "panel" }) {
       <div className="relative border-b border-orange-200 bg-orange-50">
         <p className="mx-auto w-full max-w-6xl px-10 py-2 text-center text-xs leading-5 text-zinc-700 sm:px-14 sm:text-sm">
           <span className="font-bold text-zinc-900">{DEMO_HOST}</span> is a
-          demo. OpenReply is self-hosted — signing in here will not send DMs for
+          demo. VisibleTrader DM is self-hosted — signing in here will not send DMs for
           your account.{" "}
           <a
             href={SETUP_DOCS_URL}
@@ -101,7 +101,7 @@ export function DemoNotice({ variant }: { variant: "banner" | "panel" }) {
     <div className="relative mb-5 rounded border border-warning/30 bg-warning/10 px-4 py-3 pr-10">
       <p className="text-sm leading-6 text-foreground">
         <span className="font-semibold">{DEMO_HOST} is a demo instance.</span>{" "}
-        Signing in here will not send DMs for your Instagram account. OpenReply
+        Signing in here will not send DMs for your Instagram account. VisibleTrader DM
         is self-hosted, so it only works on a deployment you run yourself, with
         your own Meta app and your own domain.{" "}
         <a

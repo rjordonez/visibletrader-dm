@@ -1,27 +1,29 @@
 @import "tailwindcss";
 
-/* ManyChat Alternative — Design System
-   Plain and functional. No gradients, glass, glow, or animation. */
+/* VisibleTrader DM — Design System
+   Same dark palette and font as app.visibletrader.com (see Venter's
+   src/app/app.css / src/index.css) — this is a separate Next.js repo, so
+   the tokens are duplicated here rather than shared, kept in sync by hand. */
 
 @theme inline {
-  --color-background: #ffffff;
-  --color-foreground: #18181b;
-  --color-surface: #f7f7f8;
-  --color-surface-hover: #efeff1;
-  --color-border: #e4e4e7;
-  --color-border-hover: #d4d4d8;
-  --color-muted: #71717a;
-  --color-accent: #f97316;
-  --color-accent-hover: #ea580c;
-  --color-success: #16a34a;
-  --color-error: #dc2626;
-  --color-warning: #d97706;
-  --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --color-background: #050505;
+  --color-foreground: #f2f3f5;
+  --color-surface: #0c0c0e;
+  --color-surface-hover: #131318;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-hover: rgba(255, 255, 255, 0.16);
+  --color-muted: #a2a2b0;
+  --color-accent: #6370ff;
+  --color-accent-hover: #4f5ce0;
+  --color-success: #00d17a;
+  --color-error: #ff3b5c;
+  --color-warning: #f2b73f;
+  --font-sans: 'Manrope', system-ui, -apple-system, sans-serif;
   --font-mono: ui-monospace, monospace;
 }
 
 html {
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 body {

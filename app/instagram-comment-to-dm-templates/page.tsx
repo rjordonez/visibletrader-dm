@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Instagram Comment-to-DM Templates for Campaigns",
     description:
-      "Start with OpenReply templates for high-intent Instagram keyword comments and private replies.",
+      "Start with VisibleTrader DM templates for high-intent Instagram keyword comments and private replies.",
     url: "/instagram-comment-to-dm-templates",
   },
 };
