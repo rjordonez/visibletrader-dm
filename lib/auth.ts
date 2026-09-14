@@ -1,6 +1,7 @@
 import NextAuth, { type NextAuthConfig } from "next-auth";
 import Nodemailer from "next-auth/providers/nodemailer";
 import Resend from "next-auth/providers/resend";
+import Google from "next-auth/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/db/client";
 import { ensureWorkspaceForUser, getPrimaryWorkspace } from "@/lib/workspace";
@@ -20,6 +21,15 @@ const smtpServer = process.env.EMAIL_SERVER;
  */
 export const EMAIL_PROVIDER_ID = smtpServer ? "nodemailer" : "resend";
 
+// Google is additive, not a replacement for the email provider above — only
+// registered when credentials are actually set, so a deployment without them
+// (or a `next build` running before Vercel env vars are wired up) still
+// works exactly as before, just without the Google button. Exported so the
+// login page can decide server-side whether to render that button at all.
+export const hasGoogleCredentials = Boolean(
+  process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+);
+
 export const authConfig = {
   adapter: PrismaAdapter(prisma as unknown as AdapterPrismaClient),
   providers: [
@@ -29,6 +39,14 @@ export const authConfig = {
           apiKey: process.env.RESEND_API_KEY ?? "missing-resend-api-key",
           from: emailFrom,
         }),
+    ...(hasGoogleCredentials
+      ? [
+          Google({
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+          }),
+        ]
+      : []),
   ],
   callbacks: {
     // Runs before the magic link is sent, so a blocked address never receives
