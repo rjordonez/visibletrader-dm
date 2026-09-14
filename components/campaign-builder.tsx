@@ -21,6 +21,7 @@ import { readCache, writeCache } from "@/lib/client-cache";
 import {
   IMPORT_QUEUE_KEY,
   IMPORT_ACCOUNT_KEY,
+  TEMPLATE_HANDOFF_KEY,
   type ImportRow,
 } from "@/lib/import-queue";
 
@@ -188,6 +189,11 @@ export default function CampaignBuilder({ mode, campaignId }: CampaignBuilderPro
   const [importQueue, setImportQueue] = useState<ImportRow[] | null>(null);
   const [importTotal, setImportTotal] = useState(0);
 
+  // Loaded from a one-off creator template (see prefillFromRow's caller
+  // below) rather than a multi-row CSV import -- tracked separately so the
+  // banner reads correctly instead of saying "Importing 1 of 1 from your CSV".
+  const [loadedTemplateName, setLoadedTemplateName] = useState<string | null>(null);
+
   const keywords = useMemo(
     () =>
       keywordText
@@ -318,11 +324,14 @@ export default function CampaignBuilder({ mode, campaignId }: CampaignBuilderPro
     };
   }, [selectedAccountId, mode, campaignId]);
 
-  // Prefill the editable fields from one queued import row. The reel is left
-  // unset so the user picks it per row.
+  // Prefill the editable fields from one queued import row (or a creator
+  // template, same shape). A CSV row never sets triggerScope, so it still
+  // defaults to "specific" -- the reel is left unset so the user picks it
+  // per row. A template row can set it to "any" instead, when it's meant to
+  // need no post picked at all.
   function prefillFromRow(row: ImportRow) {
     setName(row.name ?? "");
-    setTriggerScope("specific");
+    setTriggerScope(row.triggerScope ?? "specific");
     setPostId(null);
     setPostUrl(null);
     setPostThumb(null);
@@ -360,6 +369,24 @@ export default function CampaignBuilder({ mode, campaignId }: CampaignBuilderPro
       prefillFromRow(queue[0]);
     } catch {
       // ignore a malformed queue
+    }
+  }, [mode]);
+
+  // Pick up a one-off creator template (new mode only). Separate key and
+  // state from the CSV queue above so this renders its own small banner
+  // instead of "Importing 1 of 1 from your CSV" -- consumed once, then
+  // removed, so refreshing the page doesn't reload it over real edits.
+  useEffect(() => {
+    if (mode !== "new") return;
+    try {
+      const raw = window.localStorage.getItem(TEMPLATE_HANDOFF_KEY);
+      if (!raw) return;
+      window.localStorage.removeItem(TEMPLATE_HANDOFF_KEY);
+      const row = JSON.parse(raw) as ImportRow & { templateName?: string };
+      prefillFromRow(row);
+      setLoadedTemplateName(row.templateName ?? row.name);
+    } catch {
+      // ignore a malformed handoff
     }
   }, [mode]);
   /* eslint-enable react-hooks/set-state-in-effect */
@@ -560,6 +587,18 @@ export default function CampaignBuilder({ mode, campaignId }: CampaignBuilderPro
           <span className="text-muted">
             Fields are prefilled from your CSV. Pick the reel, edit anything, and
             save to load the next one — or Skip if you don&rsquo;t want this one.
+          </span>
+        </div>
+      )}
+
+      {loadedTemplateName && (
+        <div className="rounded border border-accent/30 bg-accent/5 px-4 py-3 text-sm">
+          <span className="font-medium text-foreground">
+            Loaded the {loadedTemplateName} template.
+          </span>{" "}
+          <span className="text-muted">
+            Everything&rsquo;s filled in — review it and hit Go Live, or edit
+            anything first.
           </span>
         </div>
       )}

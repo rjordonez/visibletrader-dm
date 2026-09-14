@@ -11,6 +11,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import AccountSelect, { type AccountOption } from "@/components/account-select";
 import { readCache, writeCache } from "@/lib/client-cache";
+import { TEMPLATE_HANDOFF_KEY } from "@/lib/import-queue";
+import { REXTRACKS_CAMPAIGN_TEMPLATE } from "@/lib/templates/rextracks-template";
 
 interface Campaign {
   id: string;
@@ -62,8 +64,29 @@ interface Campaign {
   };
 }
 
+// Stages the rextracks template in localStorage, then hands off to the
+// builder exactly the way a CSV import row does (see campaign-builder.tsx's
+// TEMPLATE_HANDOFF_KEY effect) -- everything prefilled, triggerScope "any"
+// so there's no reel to pick, "Go Live" is the only step left.
+function useRextracksTemplate() {
+  const router = useRouter();
+  return useCallback(() => {
+    try {
+      window.localStorage.setItem(
+        TEMPLATE_HANDOFF_KEY,
+        JSON.stringify({ ...REXTRACKS_CAMPAIGN_TEMPLATE, templateName: "rextracks" })
+      );
+    } catch {
+      // Storage can be unavailable (private mode, quota) -- the builder just
+      // opens blank in that case instead of erroring the whole navigation.
+    }
+    router.push("/campaigns/new");
+  }, [router]);
+}
+
 export default function CampaignsPage() {
   const router = useRouter();
+  const loadRextracksTemplate = useRextracksTemplate();
   const [automations, setAutomations] = useState<Campaign[]>([]);
   const [accounts, setAccounts] = useState<AccountOption[]>([]);
   const [selectedAccountId, setSelectedAccountId] = useState("all");
@@ -309,6 +332,14 @@ export default function CampaignsPage() {
           >
             New Campaign
           </Link>
+          <button
+            type="button"
+            onClick={loadRextracksTemplate}
+            title="Prefills a campaign with rextracks' keyword, DM, and referral link — review and Go Live"
+            className="flex-1 rounded border border-border px-4 py-2 text-center text-sm font-medium text-muted hover:text-foreground sm:flex-none"
+          >
+            Use rextracks template
+          </button>
         </div>
       </div>
 
