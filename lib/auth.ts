@@ -44,6 +44,16 @@ export const authConfig = {
           Google({
             clientId: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            // Without this, signing in with Google using an email that
+            // already has an account from the Resend/nodemailer magic link
+            // fails silently (Auth.js's default anti-takeover guard: it
+            // won't auto-link a new OAuth identity onto an existing user by
+            // email match). Safe to allow here because both providers
+            // already prove control of the same inbox on their own --
+            // Google via its own verified-email OAuth claim, the magic
+            // link by requiring a click from that inbox -- so there's no
+            // new way for someone to claim an account they don't own.
+            allowDangerousEmailAccountLinking: true,
           }),
         ]
       : []),
@@ -71,6 +81,7 @@ export const authConfig = {
   pages: {
     signIn: "/login",
     verifyRequest: "/verify-request",
+    error: "/error",
   },
   session: {
     strategy: "database",
